@@ -18,7 +18,13 @@
     "build": "yarn workspaces foreach --exclude next-app run build",
     "upgrade:tamagui": "yarn up '*tamagui*'@latest '@tamagui/*'@latest react-native-web-lite@latest",
     "upgrade:tamagui:canary": "yarn up '*tamagui*'@canary '@tamagui/*'@canary react-native-web-lite@canary",
-    "check-deps": "check-dependency-version-consistency ."
+    "check-deps": "check-dependency-version-consistency .",
+    "dev": "sst dev",
+    "build-sst": "sst build",
+    "deploy": "sst deploy",
+    "remove": "sst remove",
+    "console": "sst console",
+    "typecheck": "tsc --noEmit"
   },
   "resolutions": {
     "react": "^18.2.0",
@@ -30,10 +36,14 @@
   "dependencies": {
     "@babel/runtime": "^7.18.9",
     "@manypkg/cli": "^0.19.1",
+    "@tsconfig/node18": "^18.2.1",
+    "aws-cdk-lib": "2.91.0",
     "check-dependency-version-consistency": "^3.0.3",
+    "constructs": "10.2.69",
     "eslint": "^8.21.0",
     "node-gyp": "^9.3.1",
     "prettier": "^2.7.1",
+    "sst": "^2.24.28",
     "turbo": "^1.10.3",
     "typescript": "^5.1.3"
   },
