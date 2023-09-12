@@ -1,0 +1,329 @@
+{
+  "version": "33.0.0",
+  "artifacts": {
+    "abhinavanand-my-sst-app-API.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "abhinavanand-my-sst-app-API.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "abhinavanand-my-sst-app-API": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://348106795966/us-east-1",
+      "properties": {
+        "templateFile": "abhinavanand-my-sst-app-API.template.json",
+        "tags": {
+          "sst:app": "my-sst-app",
+          "sst:stage": "abhinavanand"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::348106795966:role/cdk-hnb659fds-deploy-role-348106795966-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::348106795966:role/cdk-hnb659fds-cfn-exec-role-348106795966-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-348106795966-us-east-1/42f3b4df8b878fd71c5fd8302a6126f5710bf78f5a1dfc327cc19d699b23c3b0.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "abhinavanand-my-sst-app-API.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::348106795966:role/cdk-hnb659fds-lookup-role-348106795966-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "abhinavanand-my-sst-app-API.assets"
+      ],
+      "metadata": {
+        "/abhinavanand-my-sst-app-API": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "sst:app",
+                "Value": "my-sst-app"
+              },
+              {
+                "Key": "sst:stage",
+                "Value": "abhinavanand"
+              }
+            ]
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/CustomResourceHandler/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomResourceHandlerServiceRole41AEC181"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/CustomResourceHandler/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomResourceHandlerE8FB56BA"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/bus/EventBus/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "busEventBus27CE599B"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/bus/RetrierQueue/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "busRetrierQueue89364BB5"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/bus/RetrierFunction/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "busRetrierFunctionServiceRoleCE8B64C2"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/bus/RetrierFunction/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "busRetrierFunctionServiceRoleDefaultPolicy1868A7F6"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/bus/RetrierFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "busRetrierFunctionA625372F"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/bus/RetrierFunction/SqsEventSource:abhinavanandmysstappAPIbusRetrierQueue3FEE6EF0/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "busRetrierFunctionSqsEventSourceabhinavanandmysstappAPIbusRetrierQueue3FEE6EF0759509E7"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/bus/todo_created_1/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "bustodocreated1ServiceRole4C30328F"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/bus/todo_created_1/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "bustodocreated1ServiceRoleDefaultPolicyB19D662B"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/bus/todo_created_1/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "bustodocreated1F82766D3"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/bus/todo_created_1/EventInvokeConfig/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "bustodocreated1EventInvokeConfig7DC57D3D"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/bus/todo_created_1_rule/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "bustodocreated1rule42B5E680"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/bus/todo_created_1_rule/AllowEventRuleabhinavanandmysstappAPIbustodocreated17A937095": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "bustodocreated1ruleAllowEventRuleabhinavanandmysstappAPIbustodocreated17A93709576BD1F8A"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/bus/Parameter_eventBusName/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "busParametereventBusNameFE245BC9"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Api/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiApiC3C473D0"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Api/DefaultStage/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiApiDefaultStageA626ED4D"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/LogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiLogGroup924E5B7A"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Lambda_GET_--/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiLambdaGETServiceRole57A117D1"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Lambda_GET_--/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiLambdaGETServiceRoleDefaultPolicyE9384899"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Lambda_GET_--/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiLambdaGET2D5CB7A7"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Lambda_GET_--/EventInvokeConfig/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiLambdaGETEventInvokeConfig794FB4BC"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Route_GET_--/Integration_GET_--/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiRouteGETIntegrationGET451F73F0"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Route_GET_--/Integration_GET_---Permission": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiRouteGETIntegrationGETPermission02100559"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Route_GET_--/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiRouteGET1A9E87AB"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Lambda_GET_--todo/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiLambdaGETtodoServiceRole94DBF9A6"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Lambda_GET_--todo/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiLambdaGETtodoServiceRoleDefaultPolicyD67972C1"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Lambda_GET_--todo/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiLambdaGETtodoE1818762"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Lambda_GET_--todo/EventInvokeConfig/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiLambdaGETtodoEventInvokeConfig6985F53B"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Route_GET_--todo/Integration_GET_--todo/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiRouteGETtodoIntegrationGETtodoC2F421C0"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Route_GET_--todo/Integration_GET_--todo-Permission": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiRouteGETtodoIntegrationGETtodoPermissionF52D07A0"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Route_GET_--todo/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiRouteGETtodo82BEE801"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Lambda_POST_--todo/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiLambdaPOSTtodoServiceRole1C95A526"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Lambda_POST_--todo/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiLambdaPOSTtodoServiceRoleDefaultPolicy8D5DDCCA"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Lambda_POST_--todo/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiLambdaPOSTtodo52E7EC32"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Lambda_POST_--todo/EventInvokeConfig/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiLambdaPOSTtodoEventInvokeConfig025FEBC5"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Route_POST_--todo/Integration_POST_--todo/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiRoutePOSTtodoIntegrationPOSTtodoBFCE49F1"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Route_POST_--todo/Integration_POST_--todo-Permission": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiRoutePOSTtodoIntegrationPOSTtodoPermission1DAFD11A"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Route_POST_--todo/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiRoutePOSTtodoE9809691"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/api/Parameter_url/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiParameterurl1D4D90E2"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/SSTStackOutputApiEndpoint": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiEndpoint"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/SSTStackOutputSSTMetadata": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SSTMetadata"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/abhinavanand-my-sst-app-API/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "abhinavanand-my-sst-app-API"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}

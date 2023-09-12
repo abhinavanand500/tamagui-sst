@@ -1,0 +1,1425 @@
+{
+ "Resources": {
+  "CustomResourceHandlerServiceRole41AEC181": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "my-sst-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "abhinavanand"
+     }
+    ]
+   }
+  },
+  "CustomResourceHandlerE8FB56BA": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-348106795966-us-east-1",
+     "S3Key": "469bb18804e21a5ab7de555118f49827c2aeb4e5445e340d4a3cd4eb866fc300.zip"
+    },
+    "Handler": "index.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomResourceHandlerServiceRole41AEC181",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "my-sst-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "abhinavanand"
+     }
+    ],
+    "Timeout": 900
+   },
+   "DependsOn": [
+    "CustomResourceHandlerServiceRole41AEC181"
+   ]
+  },
+  "busEventBus27CE599B": {
+   "Type": "AWS::Events::EventBus",
+   "Properties": {
+    "Name": "abhinavanand-my-sst-app-bus"
+   }
+  },
+  "busRetrierQueue89364BB5": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "QueueName": "abhinavanand-my-sst-app-busRetrier",
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "my-sst-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "abhinavanand"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "busRetrierFunctionServiceRoleCE8B64C2": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "my-sst-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "abhinavanand"
+     }
+    ]
+   }
+  },
+  "busRetrierFunctionServiceRoleDefaultPolicy1868A7F6": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "lambda:InvokeFunction",
+        "lambda:GetFunction"
+       ],
+       "Condition": {
+        "StringEquals": {
+         "aws:ResourceTag/sst:app": "my-sst-app",
+         "aws:ResourceTag/sst:stage": "abhinavanand"
+        }
+       },
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":lambda:us-east-1:348106795966:function:*"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "sqs:ReceiveMessage",
+        "sqs:ChangeMessageVisibility",
+        "sqs:GetQueueUrl",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "busRetrierQueue89364BB5",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "sqs:SendMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "busRetrierQueue89364BB5",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "busRetrierFunctionServiceRoleDefaultPolicy1868A7F6",
+    "Roles": [
+     {
+      "Ref": "busRetrierFunctionServiceRoleCE8B64C2"
+     }
+    ]
+   }
+  },
+  "busRetrierFunctionA625372F": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-348106795966-us-east-1",
+     "S3Key": "2c1b371daeedda7865769e55bf60f732f93f6e06747fca80ca58d897a7d1b0b5.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "RETRIER_QUEUE_URL": {
+       "Ref": "busRetrierQueue89364BB5"
+      }
+     }
+    },
+    "FunctionName": "abhinavanand-my-sst-app-busRetrier",
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "busRetrierFunctionServiceRoleCE8B64C2",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "my-sst-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "abhinavanand"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "busRetrierFunctionServiceRoleDefaultPolicy1868A7F6",
+    "busRetrierFunctionServiceRoleCE8B64C2"
+   ]
+  },
+  "busRetrierFunctionSqsEventSourceabhinavanandmysstappAPIbusRetrierQueue3FEE6EF0759509E7": {
+   "Type": "AWS::Lambda::EventSourceMapping",
+   "Properties": {
+    "EventSourceArn": {
+     "Fn::GetAtt": [
+      "busRetrierQueue89364BB5",
+      "Arn"
+     ]
+    },
+    "FunctionName": {
+     "Ref": "busRetrierFunctionA625372F"
+    }
+   }
+  },
+  "bustodocreated1ServiceRole4C30328F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "my-sst-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "abhinavanand"
+     }
+    ]
+   }
+  },
+  "bustodocreated1ServiceRoleDefaultPolicyB19D662B": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "xray:PutTraceSegments",
+        "xray:PutTelemetryRecords"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "sqs:SendMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "busRetrierQueue89364BB5",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "iot:*",
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": "s3:*",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::sstbootstrap-useast124d14e4b-evsqf01iq9rc"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::sstbootstrap-useast124d14e4b-evsqf01iq9rc/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "bustodocreated1ServiceRoleDefaultPolicyB19D662B",
+    "Roles": [
+     {
+      "Ref": "bustodocreated1ServiceRole4C30328F"
+     }
+    ]
+   }
+  },
+  "bustodocreated1F82766D3": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "x86_64"
+    ],
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-348106795966-us-east-1",
+     "S3Key": "4802b88ff95b9f55d47fed8c3185644545c13d0a169fec1d6f0d9562f403e13c.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "SST_FUNCTION_ID": "c82a54e67bdee553ecffc9cbf27e924b1ba2e42505",
+      "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+      "SST_APP": "my-sst-app",
+      "SST_STAGE": "abhinavanand",
+      "SST_SSM_PREFIX": "/sst/my-sst-app/abhinavanand/",
+      "SST_RETRIES": "10"
+     }
+    },
+    "EphemeralStorage": {
+     "Size": 512
+    },
+    "Handler": "bridge.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "bustodocreated1ServiceRole4C30328F",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs18.x",
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "my-sst-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "abhinavanand"
+     }
+    ],
+    "Timeout": 10,
+    "TracingConfig": {
+     "Mode": "Active"
+    }
+   },
+   "DependsOn": [
+    "bustodocreated1ServiceRoleDefaultPolicyB19D662B",
+    "bustodocreated1ServiceRole4C30328F"
+   ]
+  },
+  "bustodocreated1EventInvokeConfig7DC57D3D": {
+   "Type": "AWS::Lambda::EventInvokeConfig",
+   "Properties": {
+    "DestinationConfig": {
+     "OnFailure": {
+      "Destination": {
+       "Fn::GetAtt": [
+        "busRetrierQueue89364BB5",
+        "Arn"
+       ]
+      }
+     }
+    },
+    "FunctionName": {
+     "Ref": "bustodocreated1F82766D3"
+    },
+    "MaximumRetryAttempts": 0,
+    "Qualifier": "$LATEST"
+   }
+  },
+  "bustodocreated1rule42B5E680": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "EventBusName": {
+     "Ref": "busEventBus27CE599B"
+    },
+    "EventPattern": {
+     "detail-type": [
+      "todo.created"
+     ]
+    },
+    "Name": "abhinavanand-my-sst-app-todo_created_1_rule",
+    "State": "ENABLED",
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "bustodocreated1F82766D3",
+        "Arn"
+       ]
+      },
+      "Id": "Target0"
+     }
+    ]
+   }
+  },
+  "bustodocreated1ruleAllowEventRuleabhinavanandmysstappAPIbustodocreated17A93709576BD1F8A": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "bustodocreated1F82766D3",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "bustodocreated1rule42B5E680",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "busParametereventBusNameFE245BC9": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/sst/my-sst-app/abhinavanand/EventBus/bus/eventBusName",
+    "Tags": {
+     "sst:app": "my-sst-app",
+     "sst:stage": "abhinavanand"
+    },
+    "Type": "String",
+    "Value": {
+     "Ref": "busEventBus27CE599B"
+    }
+   }
+  },
+  "apiApiC3C473D0": {
+   "Type": "AWS::ApiGatewayV2::Api",
+   "Properties": {
+    "CorsConfiguration": {
+     "AllowCredentials": false,
+     "AllowHeaders": [
+      "*"
+     ],
+     "AllowMethods": [
+      "*"
+     ],
+     "AllowOrigins": [
+      "*"
+     ]
+    },
+    "Name": "abhinavanand-my-sst-app-api",
+    "ProtocolType": "HTTP",
+    "Tags": {
+     "sst:app": "my-sst-app",
+     "sst:stage": "abhinavanand"
+    }
+   }
+  },
+  "apiApiDefaultStageA626ED4D": {
+   "Type": "AWS::ApiGatewayV2::Stage",
+   "Properties": {
+    "AccessLogSettings": {
+     "DestinationArn": {
+      "Fn::GetAtt": [
+       "apiLogGroup924E5B7A",
+       "Arn"
+      ]
+     },
+     "Format": "{\"requestTime\":\"$context.requestTime\",\"requestId\":\"$context.requestId\",\"httpMethod\":\"$context.httpMethod\",\"path\":\"$context.path\",\"routeKey\":\"$context.routeKey\",\"status\":$context.status,\"responseLatency\":$context.responseLatency,\"integrationRequestId\":\"$context.integration.requestId\",\"integrationStatus\":\"$context.integration.status\",\"integrationLatency\":\"$context.integration.latency\",\"integrationServiceStatus\":\"$context.integration.integrationStatus\",\"ip\":\"$context.identity.sourceIp\",\"userAgent\":\"$context.identity.userAgent\"}"
+    },
+    "ApiId": {
+     "Ref": "apiApiC3C473D0"
+    },
+    "AutoDeploy": true,
+    "StageName": "$default",
+    "Tags": {
+     "sst:app": "my-sst-app",
+     "sst:stage": "abhinavanand"
+    }
+   }
+  },
+  "apiLogGroup924E5B7A": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/vendedlogs/apis/abhinavanand-my-sst-app-api-",
+       {
+        "Ref": "apiApiC3C473D0"
+       },
+       "/default"
+      ]
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "my-sst-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "abhinavanand"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
+  },
+  "apiLambdaGETServiceRole57A117D1": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "my-sst-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "abhinavanand"
+     }
+    ]
+   }
+  },
+  "apiLambdaGETServiceRoleDefaultPolicyE9384899": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "xray:PutTraceSegments",
+        "xray:PutTelemetryRecords"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": "events:*",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "busEventBus27CE599B",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "iot:*",
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": "s3:*",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::sstbootstrap-useast124d14e4b-evsqf01iq9rc"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::sstbootstrap-useast124d14e4b-evsqf01iq9rc/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "apiLambdaGETServiceRoleDefaultPolicyE9384899",
+    "Roles": [
+     {
+      "Ref": "apiLambdaGETServiceRole57A117D1"
+     }
+    ]
+   }
+  },
+  "apiLambdaGET2D5CB7A7": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "x86_64"
+    ],
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-348106795966-us-east-1",
+     "S3Key": "4802b88ff95b9f55d47fed8c3185644545c13d0a169fec1d6f0d9562f403e13c.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "SST_FUNCTION_ID": "c8d58932c271fc67db30d4a5ce01c7591cb1361f00",
+      "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+      "SST_APP": "my-sst-app",
+      "SST_STAGE": "abhinavanand",
+      "SST_SSM_PREFIX": "/sst/my-sst-app/abhinavanand/",
+      "SST_EventBus_eventBusName_bus": {
+       "Ref": "busEventBus27CE599B"
+      },
+      "SST_DEBUG_IS_API_ROUTE": "1"
+     }
+    },
+    "EphemeralStorage": {
+     "Size": 512
+    },
+    "Handler": "bridge.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "apiLambdaGETServiceRole57A117D1",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs18.x",
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "my-sst-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "abhinavanand"
+     }
+    ],
+    "Timeout": 10,
+    "TracingConfig": {
+     "Mode": "Active"
+    }
+   },
+   "DependsOn": [
+    "apiLambdaGETServiceRoleDefaultPolicyE9384899",
+    "apiLambdaGETServiceRole57A117D1"
+   ]
+  },
+  "apiLambdaGETEventInvokeConfig794FB4BC": {
+   "Type": "AWS::Lambda::EventInvokeConfig",
+   "Properties": {
+    "FunctionName": {
+     "Ref": "apiLambdaGET2D5CB7A7"
+    },
+    "MaximumRetryAttempts": 0,
+    "Qualifier": "$LATEST"
+   }
+  },
+  "apiRouteGETIntegrationGET451F73F0": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "apiApiC3C473D0"
+    },
+    "IntegrationType": "AWS_PROXY",
+    "IntegrationUri": {
+     "Fn::GetAtt": [
+      "apiLambdaGET2D5CB7A7",
+      "Arn"
+     ]
+    },
+    "PayloadFormatVersion": "2.0"
+   }
+  },
+  "apiRouteGETIntegrationGETPermission02100559": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "apiLambdaGET2D5CB7A7",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:348106795966:",
+       {
+        "Ref": "apiApiC3C473D0"
+       },
+       "/*/*/"
+      ]
+     ]
+    }
+   }
+  },
+  "apiRouteGET1A9E87AB": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "apiApiC3C473D0"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "GET /",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "apiRouteGETIntegrationGET451F73F0"
+       }
+      ]
+     ]
+    }
+   }
+  },
+  "apiLambdaGETtodoServiceRole94DBF9A6": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "my-sst-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "abhinavanand"
+     }
+    ]
+   }
+  },
+  "apiLambdaGETtodoServiceRoleDefaultPolicyD67972C1": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "xray:PutTraceSegments",
+        "xray:PutTelemetryRecords"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": "events:*",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "busEventBus27CE599B",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "iot:*",
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": "s3:*",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::sstbootstrap-useast124d14e4b-evsqf01iq9rc"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::sstbootstrap-useast124d14e4b-evsqf01iq9rc/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "apiLambdaGETtodoServiceRoleDefaultPolicyD67972C1",
+    "Roles": [
+     {
+      "Ref": "apiLambdaGETtodoServiceRole94DBF9A6"
+     }
+    ]
+   }
+  },
+  "apiLambdaGETtodoE1818762": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "x86_64"
+    ],
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-348106795966-us-east-1",
+     "S3Key": "4802b88ff95b9f55d47fed8c3185644545c13d0a169fec1d6f0d9562f403e13c.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "SST_FUNCTION_ID": "c89cd95e433f93a90721436671aceb45a0faf3c709",
+      "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+      "SST_APP": "my-sst-app",
+      "SST_STAGE": "abhinavanand",
+      "SST_SSM_PREFIX": "/sst/my-sst-app/abhinavanand/",
+      "SST_EventBus_eventBusName_bus": {
+       "Ref": "busEventBus27CE599B"
+      },
+      "SST_DEBUG_IS_API_ROUTE": "1"
+     }
+    },
+    "EphemeralStorage": {
+     "Size": 512
+    },
+    "Handler": "bridge.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "apiLambdaGETtodoServiceRole94DBF9A6",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs18.x",
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "my-sst-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "abhinavanand"
+     }
+    ],
+    "Timeout": 10,
+    "TracingConfig": {
+     "Mode": "Active"
+    }
+   },
+   "DependsOn": [
+    "apiLambdaGETtodoServiceRoleDefaultPolicyD67972C1",
+    "apiLambdaGETtodoServiceRole94DBF9A6"
+   ]
+  },
+  "apiLambdaGETtodoEventInvokeConfig6985F53B": {
+   "Type": "AWS::Lambda::EventInvokeConfig",
+   "Properties": {
+    "FunctionName": {
+     "Ref": "apiLambdaGETtodoE1818762"
+    },
+    "MaximumRetryAttempts": 0,
+    "Qualifier": "$LATEST"
+   }
+  },
+  "apiRouteGETtodoIntegrationGETtodoC2F421C0": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "apiApiC3C473D0"
+    },
+    "IntegrationType": "AWS_PROXY",
+    "IntegrationUri": {
+     "Fn::GetAtt": [
+      "apiLambdaGETtodoE1818762",
+      "Arn"
+     ]
+    },
+    "PayloadFormatVersion": "2.0"
+   }
+  },
+  "apiRouteGETtodoIntegrationGETtodoPermissionF52D07A0": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "apiLambdaGETtodoE1818762",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:348106795966:",
+       {
+        "Ref": "apiApiC3C473D0"
+       },
+       "/*/*/todo"
+      ]
+     ]
+    }
+   }
+  },
+  "apiRouteGETtodo82BEE801": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "apiApiC3C473D0"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "GET /todo",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "apiRouteGETtodoIntegrationGETtodoC2F421C0"
+       }
+      ]
+     ]
+    }
+   }
+  },
+  "apiLambdaPOSTtodoServiceRole1C95A526": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "my-sst-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "abhinavanand"
+     }
+    ]
+   }
+  },
+  "apiLambdaPOSTtodoServiceRoleDefaultPolicy8D5DDCCA": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "xray:PutTraceSegments",
+        "xray:PutTelemetryRecords"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": "events:*",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "busEventBus27CE599B",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "iot:*",
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": "s3:*",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::sstbootstrap-useast124d14e4b-evsqf01iq9rc"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::sstbootstrap-useast124d14e4b-evsqf01iq9rc/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "apiLambdaPOSTtodoServiceRoleDefaultPolicy8D5DDCCA",
+    "Roles": [
+     {
+      "Ref": "apiLambdaPOSTtodoServiceRole1C95A526"
+     }
+    ]
+   }
+  },
+  "apiLambdaPOSTtodo52E7EC32": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "x86_64"
+    ],
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-348106795966-us-east-1",
+     "S3Key": "4802b88ff95b9f55d47fed8c3185644545c13d0a169fec1d6f0d9562f403e13c.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "SST_FUNCTION_ID": "c832f9bb88abd26393d4d2e8264a3ed766da2ee857",
+      "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+      "SST_APP": "my-sst-app",
+      "SST_STAGE": "abhinavanand",
+      "SST_SSM_PREFIX": "/sst/my-sst-app/abhinavanand/",
+      "SST_EventBus_eventBusName_bus": {
+       "Ref": "busEventBus27CE599B"
+      },
+      "SST_DEBUG_IS_API_ROUTE": "1"
+     }
+    },
+    "EphemeralStorage": {
+     "Size": 512
+    },
+    "Handler": "bridge.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "apiLambdaPOSTtodoServiceRole1C95A526",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs18.x",
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "my-sst-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "abhinavanand"
+     }
+    ],
+    "Timeout": 10,
+    "TracingConfig": {
+     "Mode": "Active"
+    }
+   },
+   "DependsOn": [
+    "apiLambdaPOSTtodoServiceRoleDefaultPolicy8D5DDCCA",
+    "apiLambdaPOSTtodoServiceRole1C95A526"
+   ]
+  },
+  "apiLambdaPOSTtodoEventInvokeConfig025FEBC5": {
+   "Type": "AWS::Lambda::EventInvokeConfig",
+   "Properties": {
+    "FunctionName": {
+     "Ref": "apiLambdaPOSTtodo52E7EC32"
+    },
+    "MaximumRetryAttempts": 0,
+    "Qualifier": "$LATEST"
+   }
+  },
+  "apiRoutePOSTtodoIntegrationPOSTtodoBFCE49F1": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "apiApiC3C473D0"
+    },
+    "IntegrationType": "AWS_PROXY",
+    "IntegrationUri": {
+     "Fn::GetAtt": [
+      "apiLambdaPOSTtodo52E7EC32",
+      "Arn"
+     ]
+    },
+    "PayloadFormatVersion": "2.0"
+   }
+  },
+  "apiRoutePOSTtodoIntegrationPOSTtodoPermission1DAFD11A": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "apiLambdaPOSTtodo52E7EC32",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:348106795966:",
+       {
+        "Ref": "apiApiC3C473D0"
+       },
+       "/*/*/todo"
+      ]
+     ]
+    }
+   }
+  },
+  "apiRoutePOSTtodoE9809691": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "apiApiC3C473D0"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "POST /todo",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "apiRoutePOSTtodoIntegrationPOSTtodoBFCE49F1"
+       }
+      ]
+     ]
+    }
+   }
+  },
+  "apiParameterurl1D4D90E2": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/sst/my-sst-app/abhinavanand/Api/api/url",
+    "Tags": {
+     "sst:app": "my-sst-app",
+     "sst:stage": "abhinavanand"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "apiApiC3C473D0",
+      "ApiEndpoint"
+     ]
+    }
+   }
+  }
+ },
+ "Outputs": {
+  "ApiEndpoint": {
+   "Value": {
+    "Fn::GetAtt": [
+     "apiApiC3C473D0",
+     "ApiEndpoint"
+    ]
+   }
+  },
+  "SSTMetadata": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "{\"app\":\"my-sst-app\",\"stage\":\"abhinavanand\",\"version\":\"2.24.28\",\"metadata\":[{\"id\":\"bus\",\"addr\":\"c8bb5644d5825e6380174675f9bb90fdf97c79bfda\",\"stack\":\"abhinavanand-my-sst-app-API\",\"type\":\"EventBus\",\"data\":{\"eventBusName\":\"",
+      {
+       "Ref": "busEventBus27CE599B"
+      },
+      "\",\"rules\":[{\"key\":\"todo_created_1_rule\",\"targets\":[{\"node\":\"c82a54e67bdee553ecffc9cbf27e924b1ba2e42505\",\"stack\":\"abhinavanand-my-sst-app-API\"}],\"targetNames\":[\"todo_created_1_target\"]}]}},{\"id\":\"todo_created_1\",\"addr\":\"c82a54e67bdee553ecffc9cbf27e924b1ba2e42505\",\"stack\":\"abhinavanand-my-sst-app-API\",\"type\":\"Function\",\"data\":{\"arn\":\"",
+      {
+       "Fn::GetAtt": [
+        "bustodocreated1F82766D3",
+        "Arn"
+       ]
+      },
+      "\",\"runtime\":\"nodejs16.x\",\"handler\":\"packages/functions/src/events/todo-created.handler\",\"localId\":\"c82a54e67bdee553ecffc9cbf27e924b1ba2e42505\",\"secrets\":[]}},{\"id\":\"api\",\"addr\":\"c893b378b9dc3b0a6ec0ca8f8804bd10e38ae2c40d\",\"stack\":\"abhinavanand-my-sst-app-API\",\"type\":\"Api\",\"data\":{\"graphql\":false,\"url\":\"https://",
+      {
+       "Ref": "apiApiC3C473D0"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/\",\"httpApiId\":\"",
+      {
+       "Ref": "apiApiC3C473D0"
+      },
+      "\",\"routes\":[{\"type\":\"function\",\"route\":\"GET /\",\"fn\":{\"node\":\"c8d58932c271fc67db30d4a5ce01c7591cb1361f00\",\"stack\":\"abhinavanand-my-sst-app-API\"}},{\"type\":\"function\",\"route\":\"GET /todo\",\"fn\":{\"node\":\"c89cd95e433f93a90721436671aceb45a0faf3c709\",\"stack\":\"abhinavanand-my-sst-app-API\"}},{\"type\":\"function\",\"route\":\"POST /todo\",\"fn\":{\"node\":\"c832f9bb88abd26393d4d2e8264a3ed766da2ee857\",\"stack\":\"abhinavanand-my-sst-app-API\"}}]}},{\"id\":\"Lambda_GET_--\",\"addr\":\"c8d58932c271fc67db30d4a5ce01c7591cb1361f00\",\"stack\":\"abhinavanand-my-sst-app-API\",\"type\":\"Function\",\"data\":{\"arn\":\"",
+      {
+       "Fn::GetAtt": [
+        "apiLambdaGET2D5CB7A7",
+        "Arn"
+       ]
+      },
+      "\",\"runtime\":\"nodejs16.x\",\"handler\":\"packages/functions/src/lambda.handler\",\"localId\":\"c8d58932c271fc67db30d4a5ce01c7591cb1361f00\",\"secrets\":[]}},{\"id\":\"Lambda_GET_--todo\",\"addr\":\"c89cd95e433f93a90721436671aceb45a0faf3c709\",\"stack\":\"abhinavanand-my-sst-app-API\",\"type\":\"Function\",\"data\":{\"arn\":\"",
+      {
+       "Fn::GetAtt": [
+        "apiLambdaGETtodoE1818762",
+        "Arn"
+       ]
+      },
+      "\",\"runtime\":\"nodejs16.x\",\"handler\":\"packages/functions/src/todo.list\",\"localId\":\"c89cd95e433f93a90721436671aceb45a0faf3c709\",\"secrets\":[]}},{\"id\":\"Lambda_POST_--todo\",\"addr\":\"c832f9bb88abd26393d4d2e8264a3ed766da2ee857\",\"stack\":\"abhinavanand-my-sst-app-API\",\"type\":\"Function\",\"data\":{\"arn\":\"",
+      {
+       "Fn::GetAtt": [
+        "apiLambdaPOSTtodo52E7EC32",
+        "Arn"
+       ]
+      },
+      "\",\"runtime\":\"nodejs16.x\",\"handler\":\"packages/functions/src/todo.create\",\"localId\":\"c832f9bb88abd26393d4d2e8264a3ed766da2ee857\",\"secrets\":[]}}]}"
+     ]
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

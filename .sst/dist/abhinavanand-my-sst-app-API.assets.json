@@ -1,0 +1,62 @@
+{
+  "version": "33.0.0",
+  "files": {
+    "469bb18804e21a5ab7de555118f49827c2aeb4e5445e340d4a3cd4eb866fc300": {
+      "source": {
+        "path": "asset.469bb18804e21a5ab7de555118f49827c2aeb4e5445e340d4a3cd4eb866fc300",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "348106795966-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-348106795966-us-east-1",
+          "objectKey": "469bb18804e21a5ab7de555118f49827c2aeb4e5445e340d4a3cd4eb866fc300.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::348106795966:role/cdk-hnb659fds-file-publishing-role-348106795966-us-east-1"
+        }
+      }
+    },
+    "4802b88ff95b9f55d47fed8c3185644545c13d0a169fec1d6f0d9562f403e13c": {
+      "source": {
+        "path": "asset.4802b88ff95b9f55d47fed8c3185644545c13d0a169fec1d6f0d9562f403e13c",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "348106795966-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-348106795966-us-east-1",
+          "objectKey": "4802b88ff95b9f55d47fed8c3185644545c13d0a169fec1d6f0d9562f403e13c.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::348106795966:role/cdk-hnb659fds-file-publishing-role-348106795966-us-east-1"
+        }
+      }
+    },
+    "2c1b371daeedda7865769e55bf60f732f93f6e06747fca80ca58d897a7d1b0b5": {
+      "source": {
+        "path": "asset.2c1b371daeedda7865769e55bf60f732f93f6e06747fca80ca58d897a7d1b0b5",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "348106795966-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-348106795966-us-east-1",
+          "objectKey": "2c1b371daeedda7865769e55bf60f732f93f6e06747fca80ca58d897a7d1b0b5.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::348106795966:role/cdk-hnb659fds-file-publishing-role-348106795966-us-east-1"
+        }
+      }
+    },
+    "42f3b4df8b878fd71c5fd8302a6126f5710bf78f5a1dfc327cc19d699b23c3b0": {
+      "source": {
+        "path": "abhinavanand-my-sst-app-API.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "348106795966-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-348106795966-us-east-1",
+          "objectKey": "42f3b4df8b878fd71c5fd8302a6126f5710bf78f5a1dfc327cc19d699b23c3b0.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::348106795966:role/cdk-hnb659fds-file-publishing-role-348106795966-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
